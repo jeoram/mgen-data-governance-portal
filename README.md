@@ -1,7 +1,6 @@
 # MGEN - Portail de Gouvernance des Données & Qualité de Données pour l'IA
 
-Ce projet a été conçu et réalisé dans le cadre de ma candidature pour le poste de **Chargé(e) de Gouvernance et Qualité des Données en alternance** au sein de la Direction Data du **groupe MGEN**.
-
+Ce projet a été conçu et réalisé dans le cadre de ma formation en data science pour comprendre le principe de la Data gouvernance et apporté une expérience de qualité, offrir de nouvelle ressource et de nouvelles méthodes d'approche dans la protection de données.
 Il s'agit d'une application web interactive de niveau professionnel (Dashboard, Dictionnaire, SQL Console, Guide) démontrant de manière concrète mes compétences techniques et méthodologiques par rapport aux 3 piliers de la fiche de poste.
 
 
