@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MGEN - Portail de Gouvernance des Données & Qualité IA</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./style.css">
+    <!-- FontAwesome para iconografía moderna -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AlaSQL - Moteur SQL léger dans le navigateur -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alasql/4.4.0/alasql.min.js"></script>
+    <!-- Chart.js - Graphiques interactifs premium -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand-section">
+                <div class="brand-logo">M</div>
+                <div class="brand-name">MGEN DataGov</div>
+            </div>
+
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" data-target="tab-dashboard" id="nav-dashboard">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Tableau de Bord</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-target="tab-catalog" id="nav-catalog">
+                        <i class="fa-solid fa-folder-tree"></i>
+                        <span>Dictionnaire / Catalogue</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-target="tab-quality" id="nav-quality">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Qualité & Golden Data</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-target="tab-sql" id="nav-sql">
+                        <i class="fa-solid fa-terminal"></i>
+                        <span>SQL Playground</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-target="tab-guide" id="nav-guide">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>Guide OpenMetadata</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Profil Utilisateur MGEN -->
+            <div class="user-profile-card">
+                <div class="user-info">
+                    <div class="user-avatar">JR</div>
+                    <div class="user-details">
+                        <span class="user-name">Jeoram R.</span>
+                        <span class="user-role">Candidat Alternant Data</span>
+                    </div>
+                </div>
+                <button class="theme-toggle-btn" id="theme-toggle">
+                    <i class="fa-solid fa-sun"></i>
+                    <span>Mode Clair</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Contenu Principal -->
+        <main class="main-content">
+            <!-- SECTION : TABLEAU DE BORD (DASHBOARD) -->
+            <section id="tab-dashboard" class="tab-content active">
+                <div class="page-header">
+                    <div class="page-title-section">
+                        <h1>Observatoire de Gouvernance & Qualité IA</h1>
+                        <p>Supervisez l'état du patrimoine de données MGEN et des pipelines d'Intelligence Artificielle.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="runAllQualityChecks()"><i class="fa-solid fa-rotate"></i> Actualiser les métriques</button>
+                    </div>
+                </div>
+
+                <!-- Grille de métriques -->
+                <div class="metrics-grid">
+                    <div class="metric-card" style="--metric-color: var(--mgen-cyan);">
+                        <div class="metric-header">
+                            <span>Couverture OpenMetadata</span>
+                            <div class="metric-icon"><i class="fa-solid fa-book"></i></div>
+                        </div>
+                        <div class="metric-value">94.1%</div>
+                        <div class="metric-sub">
+                            <span class="metric-trend-up"><i class="fa-solid fa-arrow-trend-up"></i> +2.4%</span> ce mois-ci
+                        </div>
+                    </div>
+                    <div class="metric-card" style="--metric-color: var(--color-success);">
+                        <div class="metric-header">
+                            <span>Golden Data Quality (IA)</span>
+                            <div class="metric-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+                        <div class="metric-value" id="metrics-dq-score">87.5%</div>
+                        <div class="metric-sub">
+                            <span class="metric-trend-up" id="metrics-dq-trend"><i class="fa-solid fa-arrow-trend-up"></i> +1.2%</span> vs semaine dernière
+                        </div>
+                    </div>
+                    <div class="metric-card" style="--metric-color: var(--color-warning);">
+                        <div class="metric-header">
+                            <span>Anomalies Actives</span>
+                            <div class="metric-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        </div>
+                        <div class="metric-value" id="metrics-anomalies-count">5</div>
+                        <div class="metric-sub">
+                            <span class="text-danger"><i class="fa-solid fa-circle-info"></i> 3 critiques</span> détectées
+                        </div>
+                    </div>
+                    <div class="metric-card" style="--metric-color: #8b5cf6;">
+                        <div class="metric-header">
+                            <span>Modèles IA sous Contrôle</span>
+                            <div class="metric-icon"><i class="fa-solid fa-brain"></i></div>
+                        </div>
+                        <div class="metric-value">1 / 1</div>
+                        <div class="metric-sub">
+                            <span>Modèle Détection Fraude</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphiques et alertes -->
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-chart-line text-info"></i> Évolution de la Qualité des Données pour l'IA</div>
+                        <div class="card-subtitle">Score de conformité des tables d'entrées et de sorties IA (Adhérents, Remboursements, Prédictions).</div>
+                        <div style="height: 300px; position: relative;">
+                            <canvas id="dqEvolutionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title"><i class="fa-solid fa-chart-pie text-success"></i> Complétude des Glossaires</div>
+                        <div class="card-subtitle">Répartition de la documentation par table.</div>
+                        <div style="height: 300px; position: relative; display: flex; align-items: center; justify-content: center;">
+                            <canvas id="completenessChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alertes Qualité Récentes -->
+                <div class="card">
+                    <div class="card-title"><i class="fa-solid fa-bell text-warning"></i> Derniers Incidents de Qualité Détectés (Golden Data IA)</div>
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Table / Actif</th>
+                                    <th>Règle Transgressée</th>
+                                    <th>Gravité</th>
+                                    <th>Impact IA</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-incidents-body">
+                                <!-- Rempli dynamiquement par app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION : CATALOGUE / DICTIONNAIRE -->
+            <section id="tab-catalog" class="tab-content">
+                <div class="page-header">
+                    <div class="page-title-section">
+                        <h1>Dictionnaire de Données (Style OpenMetadata)</h1>
+                        <p>Explorez les métadonnées, le lignage (Lineage) et les classifications métiers de la MGEN.</p>
+                    </div>
+                </div>
+
+                <div class="catalog-search-bar">
+                    <div class="search-input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Rechercher une table, une colonne, un tag..." class="search-input" id="catalog-search">
+                    </div>
+                </div>
+
+                <div class="catalog-layout">
+                    <!-- Arbre de navigation -->
+                    <aside class="catalog-tree">
+                        <div class="tree-title">Bases de Données</div>
+                        <ul class="tree-list">
+                            <li class="tree-item active" data-table="adherents">
+                                <i class="fa-solid fa-table"></i>
+                                <span>adherents</span>
+                            </li>
+                            <li class="tree-item" data-table="remboursements">
+                                <i class="fa-solid fa-table"></i>
+                                <span>remboursements</span>
+                            </li>
+                            <li class="tree-item" data-table="predictions_ia">
+                                <i class="fa-solid fa-brain"></i>
+                                <span>predictions_ia</span>
+                            </li>
+                        </ul>
+                    </aside>
+
+                    <!-- Détails de la table sélectionnée -->
+                    <div class="metadata-view">
+                        <div class="metadata-header">
+                            <div class="metadata-meta-tags" id="table-badges">
+                                <!-- Rempli dynamiquement -->
+                            </div>
+                            <div class="metadata-title-area">
+                                <h2 class="metadata-title" id="table-title">adherents</h2>
+                                <span class="badge badge-mgen" id="table-owner"><i class="fa-solid fa-user"></i> Direction Data</span>
+                            </div>
+                            <p class="metadata-desc" id="table-description">Table contenant les fiches d'identité et de contact des adhérents MGEN.</p>
+                        </div>
+
+                        <!-- Propriétés additionnelles -->
+                        <div class="metadata-properties">
+                            <div class="property-box">
+                                <span class="property-label">Type d'actif</span>
+                                <span class="property-value" id="table-type">Table SQL</span>
+                            </div>
+                            <div class="property-box">
+                                <span class="property-label">Fréquence de mise à jour</span>
+                                <span class="property-value" id="table-frequency">Quotidienne</span>
+                            </div>
+                            <div class="property-box">
+                                <span class="property-label">Niveau de Sensibilité</span>
+                                <span class="property-value" id="table-classification">RGPD / Données Personnelles</span>
+                            </div>
+                        </div>
+
+                        <!-- Onglets internes -->
+                        <div class="metadata-tabs">
+                            <button class="metadata-tab-btn active" data-panel="panel-schema">Schéma & Colonnes</button>
+                            <button class="metadata-tab-btn" data-panel="panel-lineage">Lignage (Lineage)</button>
+                            <button class="metadata-tab-btn" data-panel="panel-rules">Règles de Qualité IA</button>
+                            <button class="metadata-tab-btn" data-panel="panel-erd">Modélisation & Relations</button>
+                        </div>
+
+                        <!-- PANNEAU 1 : Schéma et Colonnes -->
+                        <div class="metadata-tab-panel active" id="panel-schema">
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nom de Colonne</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                            <th>Tags & Glossaire</th>
+                                            <th>Golden Check IA</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="schema-table-body">
+                                        <!-- Rempli dynamiquement -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- PANNEAU 2 : Lignage (Lineage) -->
+                        <div class="metadata-tab-panel" id="panel-lineage">
+                            <h3 class="m-b-2">Lignage de données d'Intelligence Artificielle</h3>
+                            <p class="m-b-2 text-secondary">Visualisation des flux de données amont et aval alimentant le modèle prédictif d'IA de détection de fraudes et d'anomalies.</p>
+                            <div class="lineage-container">
+                                <div class="lineage-node golden">
+                                    <div class="lineage-node-title">adherents</div>
+                                    <div class="lineage-node-desc">Source SQL (Golden Data)</div>
+                                </div>
+                                <div class="lineage-arrow"></div>
+                                <div class="lineage-node golden">
+                                    <div class="lineage-node-title">remboursements</div>
+                                    <div class="lineage-node-desc">Source SQL (Golden Data)</div>
+                                </div>
+                                <div class="lineage-arrow"></div>
+                                <div class="lineage-node ai">
+                                    <div class="lineage-node-title">Modèle IA Détection Fraude</div>
+                                    <div class="lineage-node-desc">Pipeline Python (Scikit-Learn)</div>
+                                </div>
+                                <div class="lineage-arrow"></div>
+                                <div class="lineage-node">
+                                    <div class="lineage-node-title">predictions_ia</div>
+                                    <div class="lineage-node-desc">Table Analytique (Sortie)</div>
+                                </div>
+                            </div>
+                            <div class="alert-block alert-block-info m-t-2">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <div>
+                                    <h4>Règle de Gouvernance MGEN</h4>
+                                    <p>Les tables taguées <strong>Golden Data</strong> sont des référentiels critiques. Toute modification de schéma sur ces tables doit faire l'objet d'une validation par la Direction Data avant modification dans OpenMetadata.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANNEAU 3 : Qualité IA -->
+                        <div class="metadata-tab-panel" id="panel-rules">
+                            <h3 class="m-b-2">Règles de Qualité de Données Spécifiques à l'IA</h3>
+                            <p class="m-b-2 text-secondary">Contrôles automatiques requis pour garantir la robustesse des modèles prédictifs.</p>
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID Règle</th>
+                                            <th>Description</th>
+                                            <th>Seuil de tolérance</th>
+                                            <th>Impact si échec</th>
+                                            <th>Statut Actuel</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dq-rules-table-body">
+                                        <!-- Rempli dynamiquement -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- PANNEAU 4 : ERD Diagram -->
+                        <div class="metadata-tab-panel" id="panel-erd">
+                            <h3 class="m-b-2">Diagramme Conceptuel de Données (ERD)</h3>
+                            <p class="m-b-2 text-secondary">Modélisation relationnelle simplifiée du périmètre de remboursement maladie et de son suivi par l'IA.</p>
+                            
+                            <div class="erd-container">
+                                <div class="erd-layout">
+                                    <!-- Table Adhérents -->
+                                    <div class="erd-table-card">
+                                        <div class="erd-table-header">
+                                            <span>adherents</span>
+                                            <i class="fa-solid fa-key"></i>
+                                        </div>
+                                        <ul class="erd-table-fields">
+                                            <li class="erd-table-field"><span class="field-name"><span class="field-pk">PK</span> id_adherent</span><span class="field-type">INT</span></li>
+                                            <li class="erd-table-field"><span class="field-name">nom</span><span class="field-type">VARCHAR</span></li>
+                                            <li class="erd-table-field"><span class="field-name">prenom</span><span class="field-type">VARCHAR</span></li>
+                                            <li class="erd-table-field"><span class="field-name">email</span><span class="field-type">VARCHAR</span></li>
+                                            <li class="erd-table-field"><span class="field-name">code_postal</span><span class="field-type">VARCHAR</span></li>
+                                            <li class="erd-table-field"><span class="field-name">date_naissance</span><span class="field-type">DATE</span></li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Table Remboursements -->
+                                    <div class="erd-table-card">
+                                        <div class="erd-table-header">
+                                            <span>remboursements</span>
+                                            <i class="fa-solid fa-key"></i>
+                                        </div>
+                                        <ul class="erd-table-fields">
+                                            <li class="erd-table-field"><span class="field-name"><span class="field-pk">PK</span> id_remboursement</span><span class="field-type">INT</span></li>
+                                            <li class="erd-table-field"><span class="field-name"><span class="field-fk">FK</span> id_adherent</span><span class="field-type">INT</span></li>
+                                            <li class="erd-table-field"><span class="field-name">type_acte</span><span class="field-type">VARCHAR</span></li>
+                                            <li class="erd-table-field"><span class="field-name">montant_total</span><span class="field-type">DECIMAL</span></li>
+                                            <li class="erd-table-field"><span class="field-name">montant_rembourse</span><span class="field-type">DECIMAL</span></li>
+                                            <li class="erd-table-field"><span class="field-name">statut_traitement</span><span class="field-type">VARCHAR</span></li>
+                                        </ul>
+                                    </div>
+
+                                    <!-- Table Prédictions IA -->
+                                    <div class="erd-table-card">
+                                        <div class="erd-table-header">
+                                            <span>predictions_ia</span>
+                                            <i class="fa-solid fa-brain"></i>
+                                        </div>
+                                        <ul class="erd-table-fields">
+                                            <li class="erd-table-field"><span class="field-name"><span class="field-pk">PK</span> id_prediction</span><span class="field-type">INT</span></li>
+                                            <li class="erd-table-field"><span class="field-name"><span class="field-fk">FK</span> id_remboursement</span><span class="field-type">INT</span></li>
+                                            <li class="erd-table-field"><span class="field-name">score_anomalie</span><span class="field-type">FLOAT</span></li>
+                                            <li class="erd-table-field"><span class="field-name">decision_ia</span><span class="field-type">VARCHAR</span></li>
+                                            <li class="erd-table-field"><span class="field-name">confiance_modele</span><span class="field-type">FLOAT</span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION : QUALITE & GOLDEN DATA -->
+            <section id="tab-quality" class="tab-content">
+                <div class="page-header">
+                    <div class="page-title-section">
+                        <h1>Contrôle de Qualité pour l'IA (Golden Data)</h1>
+                        <p>Détectez et isolez les anomalies de données d'entrée ou de sortie des modèles d'apprentissage automatique.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="runAllQualityChecks()"><i class="fa-solid fa-play"></i> Exécuter les tests de qualité</button>
+                    </div>
+                </div>
+
+                <div class="card m-b-2">
+                    <div class="card-title"><i class="fa-solid fa-shield-halved text-info"></i> Registre de Contrôle des Données (Data Quality Assertions)</div>
+                    <div class="data-table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Cible / Table</th>
+                                    <th>Type de Test</th>
+                                    <th>Assertion SQL Métier</th>
+                                    <th>Statut de Validation</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quality-assertions-body">
+                                <!-- Rempli dynamiquement par app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="alert-block alert-block-warning">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <div>
+                        <h4>Recommandation de Remédiation</h4>
+                        <p>Les erreurs de clés étrangères et d'unicité identifiées ci-dessus doivent être corrigées dans la base source (ETL) avant d'alimenter les algorithmes d'apprentissage pour éviter des biais statistiques importants et des erreurs d'attribution de scores.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION : SQL PLAYGROUND -->
+            <section id="tab-sql" class="tab-content">
+                <div class="page-header">
+                    <div class="page-title-section">
+                        <h1>Console de Requêtage SQL (Playground)</h1>
+                        <p>Testez vos requêtes de qualité de données en direct sur la base de données MGEN simulée.</p>
+                    </div>
+                </div>
+
+                <div class="sql-playground-grid">
+                    <!-- Scripts de gauche -->
+                    <aside class="sql-sidebar">
+                        <div class="tree-title">Requêtes Qualité Prédéfinies</div>
+                        <div id="sql-scripts-list">
+                            <!-- Rempli dynamiquement par app.js -->
+                        </div>
+                    </aside>
+
+                    <!-- Éditeur de droite -->
+                    <div class="sql-editor-container">
+                        <div class="sql-editor-wrapper">
+                            <div class="sql-editor-header">
+                                <span class="editor-label">Console SQLite</span>
+                                <button class="btn btn-primary btn-sm" id="btn-run-sql"><i class="fa-solid fa-play"></i> Exécuter (Ctrl+Enter)</button>
+                            </div>
+                            <textarea class="sql-textarea" id="sql-code-editor" spellcheck="false">-- Sélectionnez une requête prédéfinie ou écrivez votre propre code SQL.
+-- Exemple :
+SELECT * FROM adherents LIMIT 5;
+                            </textarea>
+                        </div>
+
+                        <!-- Résultats -->
+                        <div class="sql-results-panel">
+                            <div class="sql-results-header">
+                                <span class="editor-label"><i class="fa-solid fa-database"></i> Résultats de la requête</span>
+                                <span class="results-status" id="sql-results-status">Base connectée</span>
+                            </div>
+                            <div class="sql-results-placeholder" id="results-placeholder">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <p>Cliquez sur "Exécuter" pour afficher les résultats ou sélectionnez un test qualité à gauche.</p>
+                            </div>
+                            <div class="data-table-container" id="results-table-container" style="display: none;">
+                                <table class="data-table" id="results-table">
+                                    <thead id="results-table-head">
+                                        <!-- Rempli dynamiquement -->
+                                    </thead>
+                                    <tbody id="results-table-body">
+                                        <!-- Rempli dynamiquement -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION : GUIDE OPENMETADATA -->
+            <section id="tab-guide" class="tab-content">
+                <div class="page-header">
+                    <div class="page-title-section">
+                        <h1>Centre de Formation & Guide OpenMetadata</h1>
+                        <p>Documentation pédagogique sur l'utilisation et l'enrichissement du dictionnaire de données.</p>
+                    </div>
+                </div>
+
+                <div class="guide-grid">
+                    <!-- Navigation Guide -->
+                    <nav class="guide-nav">
+                        <div class="tree-title">Sommaire</div>
+                        <ul class="guide-nav-list">
+                            <li class="guide-nav-item active" data-section="guide-intro">1. Qu'est-ce qu'OpenMetadata ?</li>
+                            <li class="guide-nav-item" data-section="guide-ingest">2. Ingestion des Métadonnées</li>
+                            <li class="guide-nav-item" data-section="guide-document">3. Documenter & Taguer</li>
+                            <li class="guide-nav-item" data-section="guide-golden">4. Gérer les Golden Data</li>
+                            <li class="guide-nav-item" data-section="guide-support">5. Support & Communauté</li>
+                        </ul>
+                    </nav>
+
+                    <!-- Contenu Guide -->
+                    <article class="guide-content">
+                        <!-- SECTION 1 : INTRO -->
+                        <div class="guide-section active" id="guide-intro">
+                            <h2>1. Qu'est-ce qu'OpenMetadata ?</h2>
+                            <p>OpenMetadata est une plateforme open-source de gouvernance des données qui centralise la découverte des données, le lignage (lineage), la qualité, les règles de conformité et le travail collaboratif autour de la donnée.</p>
+                            <p>Au sein de la Direction Data de la MGEN, OpenMetadata sert de **référentiel unique** pour répondre à plusieurs questions fondamentales :</p>
+                            <ul>
+                                <li><strong>Où se trouvent mes données ?</strong> (Découverte via moteur de recherche)</li>
+                                <li><strong>Qui est responsable de ces données ?</strong> (Affectation des Data Owners)</li>
+                                <li><strong>D'où viennent ces données et comment sont-elles transformées ?</strong> (Lignage de bout en bout)</li>
+                                <li><strong>Puis-je faire confiance à ces données pour mes analyses ou mes modèles d'IA ?</strong> (Data Quality & Golden Data)</li>
+                            </ul>
+                            <div class="alert-block alert-block-info">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <div>
+                                    <h4>Rôle de l'Alternant MGEN</h4>
+                                    <p>Votre mission principale consiste à enrichir ce dictionnaire en documentant les descriptions, en y ajoutant les tags de classification (ex. RGPD, Sensible), et en formant les utilisateurs métier à utiliser l'outil de manière autonome pour briser les silos d'information.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 2 : INGESTION -->
+                        <div class="guide-section" id="guide-ingest">
+                            <h2>2. Ingestion des Métadonnées</h2>
+                            <p>L'ingestion dans OpenMetadata se fait automatiquement ou semi-automatiquement via des connecteurs de bases de données (PostgreSQL, BigQuery, Snowflake) ou par API.</p>
+                            <h3>Étapes clés de l'ingestion :</h3>
+                            <ol>
+                                <li><strong>Configuration du Connecteur</strong> : Définition des informations de connexion (hôte, identifiants, base de données).</li>
+                                <li><strong>Sélection des Schémas</strong> : Filtres pour n'ingérer que les tables utiles (ex. exclure les tables temporaires de staging).</li>
+                                <li><strong>Planification (Scheduling)</strong> : Les métadonnées sont synchronisées toutes les nuits pour refléter les changements de schémas (DDL).</li>
+                            </ol>
+                            <p><strong>Note technique :</strong> OpenMetadata n'ingère jamais les données réelles (les lignes de la base), mais uniquement les <strong>structures de données</strong> (les noms de tables, de colonnes, les types et les clés). La confidentialité des données des adhérents MGEN est ainsi totalement préservée.</p>
+                        </div>
+
+                        <!-- SECTION 3 : DOCUMENTER & TAGUER -->
+                        <div class="guide-section" id="guide-document">
+                            <h2>3. Documenter et Taguer les Actifs</h2>
+                            <p>Un dictionnaire sans documentation humaine n'est qu'un catalogue technique. Pour donner de la valeur, chaque table et colonne doit être documentée.</p>
+                            <h3>Recommandations de Rédaction :</h3>
+                            <ul>
+                                <li><strong>Descriptions claires</strong> : Évitez les tautologies. Ne décrivez pas <code>id_adherent</code> par "Identifiant adhérent", mais par "Identifiant unique généré lors de la souscription à la mutuelle MGEN, faisant office de clé de réconciliation."</li>
+                                <li><strong>Utilisation des Glossaires</strong> : Raccordez les termes techniques à des termes de glossaire métier définis par l'entreprise (ex. "Adhérent", "Bénéficiaire", "Reste à Charge").</li>
+                            </ul>
+                            <h3>Système de Tagging MGEN :</h3>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Catégorie de Tag</th>
+                                        <th>Exemple</th>
+                                        <th>Action Requise</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Classification de Confidentialité</strong></td>
+                                        <td><span class="badge badge-danger">RGPD.PII</span></td>
+                                        <td>Chiffrement de la colonne obligatoire dans les exports.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Niveau de Qualité</strong></td>
+                                        <td><span class="badge badge-success">Tier.GoldenData</span></td>
+                                        <td>Table de référence absolue pour les modèles IA.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Usage Applicatif</strong></td>
+                                        <td><span class="badge badge-info">Usage.IA-Input</span></td>
+                                        <td>Table lue directement par un algorithme prédictif.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- SECTION 4 : GÉRER LES GOLDEN DATA -->
+                        <div class="guide-section" id="guide-golden">
+                            <h2>4. Gérer la Qualité & les Golden Data pour l'IA</h2>
+                            <p>Les modèles d'Intelligence Artificielle de la MGEN (comme la détection d'anomalies de remboursement) dépendent fortement de la qualité des données d'entraînement. C'est ce qu'on appelle la démarche <strong>Data-Centric AI</strong>.</p>
+                            <h3>Qu'est-ce qu'une "Golden Data" ?</h3>
+                            <p>Il s'agit d'une table ou d'un jeu de données identifié comme faisant foi, ayant un propriétaire identifié, documenté à 100%, et dont le taux de conformité qualité est supérieur à 99%.</p>
+                            <h3>Comment configurer des alertes de qualité dans OpenMetadata ?</h3>
+                            <ol>
+                                <li>Sélectionnez la table dans OpenMetadata, puis cliquez sur l'onglet **Profiler & Data Quality**.</li>
+                                <li>Cliquez sur **Add Test** (Ajouter un test de colonne ou de table).</li>
+                                <li>Sélectionnez le type de test : <code>column_values_to_be_not_null</code>, <code>column_values_to_be_unique</code> ou un script SQL personnalisé.</li>
+                                <li>Définissez les seuils d'alerte et associez un canal de notification (Slack, Teams, e-mail) vers le Data Owner en cas d'échec.</li>
+                            </ol>
+                            <div class="alert-block alert-block-warning">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <div>
+                                    <h4>Attention aux biais de modèles IA</h4>
+                                    <p>Si des données erronées (par exemple, des montants de remboursements négatifs) passent les filtres qualité, le modèle d'IA va apprendre des comportements faux. C'est pourquoi la direction Data MGEN impose le contrôle systématique des entrées/sorties IA.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SECTION 5 : SUPPORT -->
+                        <div class="guide-section" id="guide-support">
+                            <h2>5. Support & Assistance Fonctionnelle</h2>
+                            <p>En tant que point de contact sur OpenMetadata, vous aurez à accompagner les analystes et data scientists de la MGEN.</p>
+                            <h3>Bonnes pratiques d'accompagnement :</h3>
+                            <ul>
+                                <li>Organiser des sessions mensuelles de démo de 30 minutes ("Café Data").</li>
+                                <li>Tenir à jour une FAQ interne sur l'Intranet.</li>
+                                <li>Assurer une assistance de premier niveau : déblocage des accès, création de nouveaux tags, assistance dans l'écriture de tests de qualité complexes.</li>
+                            </ul>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts Applicatifs -->
+    <script src="./db_init.js"></script>
+    <script src="./app.js"></script>
+</body>
+</html>
