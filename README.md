@@ -4,9 +4,21 @@ Ce projet a été conçu et réalisé dans le cadre de ma candidature pour le po
 
 Il s'agit d'une application web interactive de niveau professionnel (Dashboard, Dictionnaire, SQL Console, Guide) démontrant de manière concrète mes compétences techniques et méthodologiques par rapport aux 3 piliers de la fiche de poste.
 
-## 🔗 Démonstration en Direct
-> [!TIP]
-> Ce projet est conçu pour être hébergé instantanément sur **GitHub Pages**. Une fois poussé sur votre dépôt GitHub, les recruteurs pourront le tester directement dans leur navigateur sans aucune installation requise !
+
+---
+
+## 📸 Aperçu Visuel du Portail
+
+<div align="center">
+  <h3>Tableau de Bord de Gouvernance & Qualité IA</h3>
+  <img src="./dashboard_mockup.png" width="800" alt="Dashboard MGEN DataGov"/>
+  
+  <h3>Dictionnaire de Données (Style OpenMetadata)</h3>
+  <img src="./openmetadata_catalog_mockup.png" width="800" alt="Dictionnaire de Données MGEN"/>
+
+  <h3>Playground SQL & Vérifications de Qualité</h3>
+  <img src="./sql_playground_mockup.png" width="800" alt="Console SQL MGEN"/>
+</div>
 
 ---
 
